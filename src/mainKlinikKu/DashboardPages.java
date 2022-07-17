@@ -6,16 +6,23 @@
 package mainKlinikKu;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
@@ -26,149 +33,149 @@ public class DashboardPages extends javax.swing.JFrame {
     Koneksi Konek = new Koneksi();
     private Connection Con;
     Statement Stm;
-    ResultSet Rs,Rs2;
+    ResultSet Rs, Rs2;
     String Sql;
     DefaultTableModel Dtm;
-    
+
     public DashboardPages() {
         initComponents();
-        
+
         LoadDataJenisPeliharaan();
         LoadDataTreatment();
         LoadDataJenisHewan();
         LoadDataJenisLayanan();
-        
+
         AddDataJenisHewanBaru();
         AddDataJenisLayananBaru();
         AddDataJenisPeliharaanBaru();
         AddDataJenisTreatmentBaru();
-        
+
         tampilDataTable();
-        
+
         panelLokasi.setVisible(false);
         panelDataPeriksa.setVisible(false);
         panelDataLainnya.setVisible(false);
         panelDataUser.setVisible(false);
         panelHome.setVisible(true);
-        
+
         tabHome.setBackground(Color.BLACK);
-        
+
         textFieldJenisHewan.setEnabled(false);
     }
 
-    private void LoadDataJenisPeliharaan(){
+    private void LoadDataJenisPeliharaan() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
             Sql = "select * from load_jenis_peliharaan";
-            Rs=Stm.executeQuery(Sql);
-            while(Rs.next()) {
+            Rs = Stm.executeQuery(Sql);
+            while (Rs.next()) {
                 cmbJenisPeliharaan.addItem(Rs.getString("jenis_peliharaan"));
             }
         } catch (SQLException e) {
-            System.out.println("Koneksi Gagal : "+e.toString());
+            System.out.println("Koneksi Gagal : " + e.toString());
         }
     }
-    
-    private void LoadDataJenisLayanan(){
+
+    private void LoadDataJenisLayanan() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
             Sql = "select * from load_jenis_layanan";
-            Rs=Stm.executeQuery(Sql);
-            while(Rs.next()) {
+            Rs = Stm.executeQuery(Sql);
+            while (Rs.next()) {
                 cmbJenisLayanan.addItem(Rs.getString("layanan"));
             }
         } catch (SQLException e) {
-            System.out.println("Koneksi Gagal : "+e.toString());
+            System.out.println("Koneksi Gagal : " + e.toString());
         }
     }
-    
-    private void LoadDataTreatment(){
+
+    private void LoadDataTreatment() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
             Sql = "select * from load_treatment";
-            Rs=Stm.executeQuery(Sql);
-            while(Rs.next()) {
+            Rs = Stm.executeQuery(Sql);
+            while (Rs.next()) {
                 cmbJenisTreatment.addItem(Rs.getString("jenis_treatment"));
             }
         } catch (SQLException e) {
-            System.out.println("Koneksi Gagal : "+e.toString());
+            System.out.println("Koneksi Gagal : " + e.toString());
         }
     }
-    
-    private void LoadDataJenisHewan(){
+
+    private void LoadDataJenisHewan() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
             Sql = "select * from load_jenis_hewan";
-            Rs=Stm.executeQuery(Sql);
-            while(Rs.next()) {
+            Rs = Stm.executeQuery(Sql);
+            while (Rs.next()) {
                 cmbJenisHewan.addItem(Rs.getString("jenis_hewan"));
             }
         } catch (SQLException e) {
-            System.out.println("Koneksi Gagal : "+e.toString());
+            System.out.println("Koneksi Gagal : " + e.toString());
         }
     }
-    
-    private void AddDataJenisHewanBaru(){
+
+    private void AddDataJenisHewanBaru() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
-            Sql = "select * from load_jenis_hewan where kode = '"+textFieldKode.getText()+"'";
-            Rs=Stm.executeQuery(Sql);
-            while(Rs.next()) {
+            Sql = "select * from load_jenis_hewan where kode = '" + textFieldKode.getText() + "'";
+            Rs = Stm.executeQuery(Sql);
+            while (Rs.next()) {
                 cmbJenisHewan.addItem(Rs.getString("jenis_hewan"));
             }
         } catch (SQLException e) {
-            System.out.println("Koneksi Gagal : "+e.toString());
+            System.out.println("Koneksi Gagal : " + e.toString());
         }
     }
-    
-    private void AddDataJenisPeliharaanBaru(){
+
+    private void AddDataJenisPeliharaanBaru() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
-            Sql = "select * from load_jenis_peliharaan where kode = '"+textFieldKode1.getText()+"'";
-            Rs=Stm.executeQuery(Sql);
-            while(Rs.next()) {
+            Sql = "select * from load_jenis_peliharaan where kode = '" + textFieldKode1.getText() + "'";
+            Rs = Stm.executeQuery(Sql);
+            while (Rs.next()) {
                 cmbJenisPeliharaan.addItem(Rs.getString("jenis_peliharaan"));
             }
         } catch (SQLException e) {
-            System.out.println("Koneksi Gagal : "+e.toString());
+            System.out.println("Koneksi Gagal : " + e.toString());
         }
     }
-    
-    private void AddDataJenisLayananBaru(){
+
+    private void AddDataJenisLayananBaru() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
-            Sql = "select * from load_jenis_layanan where kode = '"+textFieldKode2.getText()+"'";
-            Rs=Stm.executeQuery(Sql);
-            while(Rs.next()) {
+            Sql = "select * from load_jenis_layanan where kode = '" + textFieldKode2.getText() + "'";
+            Rs = Stm.executeQuery(Sql);
+            while (Rs.next()) {
                 cmbJenisLayanan.addItem(Rs.getString("layanan"));
             }
         } catch (SQLException e) {
-            System.out.println("Koneksi Gagal : "+e.toString());
+            System.out.println("Koneksi Gagal : " + e.toString());
         }
     }
-    
-    private void AddDataJenisTreatmentBaru(){
+
+    private void AddDataJenisTreatmentBaru() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
-            Sql = "select * from load_treatment where kode = '"+textFieldKode3.getText()+"'";
-            Rs=Stm.executeQuery(Sql);
-            while(Rs.next()) {
+            Sql = "select * from load_treatment where kode = '" + textFieldKode3.getText() + "'";
+            Rs = Stm.executeQuery(Sql);
+            while (Rs.next()) {
                 cmbJenisTreatment.addItem(Rs.getString("jenis_treatment"));
             }
         } catch (SQLException e) {
-            System.out.println("Koneksi Gagal : "+e.toString());
+            System.out.println("Koneksi Gagal : " + e.toString());
         }
     }
-    
-    void kosongObjek(){
+
+    void kosongObjek() {
         textFieldNoUrut.setText("");
         textFieldNama.setText("");
         textFieldAlamat.setText("");
@@ -176,13 +183,13 @@ public class DashboardPages extends javax.swing.JFrame {
         textFieldJenisHewan.setText("");
         textFieldNamaHewan.setText("");
         textFieldNamaDokter.setText("");
-        
+
         jdateTanggalPeriksa.setDate(null);
-        
+
         cmbJenisPeliharaan.setSelectedIndex(0);
         cmbJenisTreatment.setSelectedIndex(0);
         cmbJenisLayanan.setSelectedIndex(0);
-        
+
 //        textFieldKode1.setText("");
 //        textFieldJenisPeliharaan.setText("");
 //        cmbJenisHewan.setSelectedIndex(0);
@@ -190,8 +197,8 @@ public class DashboardPages extends javax.swing.JFrame {
 //        textFieldKode.setText("");
 //        textFieldJenisTreatment.setText("");
     }
-    
-    private void AturJTable(JTable Lihat, int Lebar[]){
+
+    private void AturJTable(JTable Lihat, int Lebar[]) {
         try {
             Lihat.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             int banyak = Lihat.getColumnCount();
@@ -201,33 +208,34 @@ public class DashboardPages extends javax.swing.JFrame {
                 Lihat.setRowHeight(30);
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "salah "+e);
+            JOptionPane.showMessageDialog(null, "salah " + e);
         }
     }
-    
-    private void TampilModelJTabel(){
+
+    private void TampilModelJTabel() {
         try {
-            String[]kolom = {
-                "No. Urut","Tanggal Periksa","Nama","Alamat","No. Hp",
-                "Jenis Peliharaan","Jenis Hewan","Nama Hewan","Nama Dokter","Jenis Layanan","Jenis Treatment"
+            String[] kolom = {
+                "No. Urut", "Tanggal Periksa", "Nama", "Alamat", "No. Hp",
+                "Jenis Peliharaan", "Jenis Hewan", "Nama Hewan", "Nama Dokter", "Jenis Layanan", "Jenis Treatment"
             };
-            Dtm = new DefaultTableModel(null, kolom){
+            Dtm = new DefaultTableModel(null, kolom) {
                 @Override
-                public boolean  isCellEditable(int rowIndex, int columnIndex){
+                public boolean isCellEditable(int rowIndex, int columnIndex) {
                     return false;
-                };
+                }
+            ;
             };
             jTable1.setModel(Dtm);
             AturJTable(jTable1, new int[]{
-                200,200,150,300,100,
-                150,150,150,200,150,150
+                200, 200, 150, 300, 100,
+                150, 150, 150, 200, 150, 150
             });
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "salah "+e);
+            JOptionPane.showMessageDialog(null, "salah " + e);
         }
     }
-    
-    void tampilDataTable(){
+
+    void tampilDataTable() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
@@ -258,8 +266,7 @@ public class DashboardPages extends javax.swing.JFrame {
                         Rs.getString("NamaHewan"),
                         Rs.getString("NamaDokter"),
                         Rs.getString("Layanan"),
-                        Rs.getString("Treatment"),
-                    });
+                        Rs.getString("Treatment"),});
                     jTable1.setModel(Dtm);
                 }
             } catch (Exception e) {
@@ -269,8 +276,8 @@ public class DashboardPages extends javax.swing.JFrame {
             System.out.println("koneksi gagal " + e.toString());
         }
     }
-    
-    void cariDataTable(){
+
+    void cariDataTable() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
@@ -288,7 +295,7 @@ public class DashboardPages extends javax.swing.JFrame {
                         + "table_data_periksa.layanan AS Layanan, "
                         + "table_data_periksa.treatment AS Treatment "
                         + "FROM table_data_periksa "
-                        + "WHERE nama LIKE '%"+textFieldSearch.getText()+"%'";
+                        + "WHERE nama LIKE '%" + textFieldSearch.getText() + "%'";
                 Rs = Stm.executeQuery(Sql);
                 while (Rs.next()) {
                     Dtm.addRow(new Object[]{
@@ -302,8 +309,7 @@ public class DashboardPages extends javax.swing.JFrame {
                         Rs.getString("NamaHewan"),
                         Rs.getString("NamaDokter"),
                         Rs.getString("Layanan"),
-                        Rs.getString("Treatment"),
-                    });
+                        Rs.getString("Treatment"),});
                     jTable1.setModel(Dtm);
                 }
             } catch (Exception e) {
@@ -313,7 +319,7 @@ public class DashboardPages extends javax.swing.JFrame {
             System.out.println("koneksi gagal " + e.toString());
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -380,6 +386,7 @@ public class DashboardPages extends javax.swing.JFrame {
         textFieldNamaHewan = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        btnExportExcel = new javax.swing.JButton();
         panelDataLainnya = new javax.swing.JPanel();
         jLabel32 = new javax.swing.JLabel();
         jLabel33 = new javax.swing.JLabel();
@@ -416,7 +423,7 @@ public class DashboardPages extends javax.swing.JFrame {
         btnAdd = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1200, 700));
+        setPreferredSize(new java.awt.Dimension(1270, 700));
         setSize(new java.awt.Dimension(0, 0));
 
         jPanel1.setBackground(new java.awt.Color(255, 102, 102));
@@ -655,7 +662,7 @@ public class DashboardPages extends javax.swing.JFrame {
                 .addComponent(tabUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tabLokasi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(196, 196, 196)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 204, Short.MAX_VALUE)
                 .addComponent(tabLogout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tabExit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -678,7 +685,7 @@ public class DashboardPages extends javax.swing.JFrame {
             .addGroup(panelLokasiLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelLokasiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel45, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE)
+                    .addComponent(jLabel45, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE)
                     .addGroup(panelLokasiLayout.createSequentialGroup()
                         .addComponent(jLabel46)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -879,6 +886,14 @@ public class DashboardPages extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTable1);
 
+        btnExportExcel.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        btnExportExcel.setText("Export (Excel)");
+        btnExportExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportExcelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelDataPeriksaLayout = new javax.swing.GroupLayout(panelDataPeriksa);
         panelDataPeriksa.setLayout(panelDataPeriksaLayout);
         panelDataPeriksaLayout.setHorizontalGroup(
@@ -934,8 +949,10 @@ public class DashboardPages extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(textFieldSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(btnSearch)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addComponent(btnSearch)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnExportExcel)))
+                        .addGap(0, 335, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelDataPeriksaLayout.setVerticalGroup(
@@ -990,7 +1007,8 @@ public class DashboardPages extends javax.swing.JFrame {
                 .addGroup(panelDataPeriksaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel19)
                     .addComponent(textFieldSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSearch))
+                    .addComponent(btnSearch)
+                    .addComponent(btnExportExcel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1396,12 +1414,12 @@ public class DashboardPages extends javax.swing.JFrame {
         panelDataLainnya.setVisible(false);
         panelDataUser.setVisible(false);
         panelLokasi.setVisible(false);
-        
+
         tabHome.setBackground(Color.BLACK);
-        tabDataPeriksa.setBackground(new Color(204,0, 102));
-        tabDataLainnya.setBackground(new Color(204,0, 102));
-        tabUser.setBackground(new Color(204,0, 102));
-        tabLokasi.setBackground(new Color(204,0, 102));
+        tabDataPeriksa.setBackground(new Color(204, 0, 102));
+        tabDataLainnya.setBackground(new Color(204, 0, 102));
+        tabUser.setBackground(new Color(204, 0, 102));
+        tabLokasi.setBackground(new Color(204, 0, 102));
     }//GEN-LAST:event_tabHomeMouseClicked
 
     private void tabDataPeriksaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabDataPeriksaMouseClicked
@@ -1410,12 +1428,12 @@ public class DashboardPages extends javax.swing.JFrame {
         panelDataLainnya.setVisible(false);
         panelDataUser.setVisible(false);
         panelHome.setVisible(false);
-        
-        tabHome.setBackground(new Color(204,0, 102));
+
+        tabHome.setBackground(new Color(204, 0, 102));
         tabDataPeriksa.setBackground(Color.BLACK);
-        tabDataLainnya.setBackground(new Color(204,0, 102));
-        tabUser.setBackground(new Color(204,0, 102));
-        tabLokasi.setBackground(new Color(204,0, 102));
+        tabDataLainnya.setBackground(new Color(204, 0, 102));
+        tabUser.setBackground(new Color(204, 0, 102));
+        tabLokasi.setBackground(new Color(204, 0, 102));
     }//GEN-LAST:event_tabDataPeriksaMouseClicked
 
     private void tabDataLainnyaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabDataLainnyaMouseClicked
@@ -1424,12 +1442,12 @@ public class DashboardPages extends javax.swing.JFrame {
         panelDataLainnya.setVisible(true);
         panelDataUser.setVisible(false);
         panelHome.setVisible(false);
-        
-        tabHome.setBackground(new Color(204,0, 102));
-        tabDataPeriksa.setBackground(new Color(204,0, 102));
+
+        tabHome.setBackground(new Color(204, 0, 102));
+        tabDataPeriksa.setBackground(new Color(204, 0, 102));
         tabDataLainnya.setBackground(Color.BLACK);
-        tabUser.setBackground(new Color(204,0, 102));
-        tabLokasi.setBackground(new Color(204,0, 102));
+        tabUser.setBackground(new Color(204, 0, 102));
+        tabLokasi.setBackground(new Color(204, 0, 102));
     }//GEN-LAST:event_tabDataLainnyaMouseClicked
 
     private void tabUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabUserMouseClicked
@@ -1438,12 +1456,12 @@ public class DashboardPages extends javax.swing.JFrame {
         panelDataLainnya.setVisible(false);
         panelDataUser.setVisible(true);
         panelHome.setVisible(false);
-        
-        tabHome.setBackground(new Color(204,0, 102));
-        tabDataPeriksa.setBackground(new Color(204,0, 102));
-        tabDataLainnya.setBackground(new Color(204,0, 102));
+
+        tabHome.setBackground(new Color(204, 0, 102));
+        tabDataPeriksa.setBackground(new Color(204, 0, 102));
+        tabDataLainnya.setBackground(new Color(204, 0, 102));
         tabUser.setBackground(Color.BLACK);
-        tabLokasi.setBackground(new Color(204,0, 102));
+        tabLokasi.setBackground(new Color(204, 0, 102));
     }//GEN-LAST:event_tabUserMouseClicked
 
     private void tabLokasiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabLokasiMouseClicked
@@ -1452,11 +1470,11 @@ public class DashboardPages extends javax.swing.JFrame {
         panelDataLainnya.setVisible(false);
         panelDataUser.setVisible(false);
         panelLokasi.setVisible(true);
-        
-        tabHome.setBackground(new Color(204,0, 102));
-        tabDataPeriksa.setBackground(new Color(204,0, 102));
-        tabDataLainnya.setBackground(new Color(204,0, 102));
-        tabUser.setBackground(new Color(204,0, 102));
+
+        tabHome.setBackground(new Color(204, 0, 102));
+        tabDataPeriksa.setBackground(new Color(204, 0, 102));
+        tabDataLainnya.setBackground(new Color(204, 0, 102));
+        tabUser.setBackground(new Color(204, 0, 102));
         tabLokasi.setBackground(Color.BLACK);
     }//GEN-LAST:event_tabLokasiMouseClicked
 
@@ -1477,11 +1495,11 @@ public class DashboardPages extends javax.swing.JFrame {
     private void textFieldUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldUsernameActionPerformed
         try {
             Con = Konek.getKoneksiDatabase();
-            Sql = "Select * from table_login where username='" +textFieldUsername.getText() + "'";
-            Stm= Con.createStatement();
+            Sql = "Select * from table_login where username='" + textFieldUsername.getText() + "'";
+            Stm = Con.createStatement();
             Rs2 = Stm.executeQuery(Sql);
-            if (Rs2.next()){
-                JOptionPane.showMessageDialog(this,"Silahkan Memasukkan Username Lain atau Melakukan Login", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            if (Rs2.next()) {
+                JOptionPane.showMessageDialog(this, "Silahkan Memasukkan Username Lain atau Melakukan Login", "Informasi", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 textFieldPassword.requestFocus();
             }
@@ -1493,29 +1511,29 @@ public class DashboardPages extends javax.swing.JFrame {
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         try {
             Con = Konek.getKoneksiDatabase();
-            Sql = "Select * from table_login where username='" +textFieldUsername.getText() + "'";
-            Stm= Con.createStatement();
+            Sql = "Select * from table_login where username='" + textFieldUsername.getText() + "'";
+            Stm = Con.createStatement();
             Rs2 = Stm.executeQuery(Sql);
-            if (Rs2.next()){
-                JOptionPane.showMessageDialog(this,"Silahkan Memasukkan Username Lain atau Melakukan Login", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            if (Rs2.next()) {
+                JOptionPane.showMessageDialog(this, "Silahkan Memasukkan Username Lain atau Melakukan Login", "Informasi", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 try {
                     Con = Konek.getKoneksiDatabase();
                     Stm = null;
                     Sql = "insert into table_login (username, password) VALUES ('"
-                    +textFieldUsername.getText()+"', '"+textFieldPassword.getText()+"')";
+                            + textFieldUsername.getText() + "', '" + textFieldPassword.getText() + "')";
                     Stm = Con.createStatement();
                     int AdaPenambahanRecord = Stm.executeUpdate(Sql);
-                    if (AdaPenambahanRecord>0) {
-                        JOptionPane.showMessageDialog(this,"Data Berhasil Tersimpan", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+                    if (AdaPenambahanRecord > 0) {
+                        JOptionPane.showMessageDialog(this, "Data Berhasil Tersimpan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(this,"Data Gagal Tersimpan", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Data Gagal Tersimpan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
                     }
                     Stm.close();
                     textFieldUsername.setText("");
                     textFieldPassword.setText("");
                 } catch (SQLException e) {
-                    System.out.println("Koneksi Gagal " +e.toString());
+                    System.out.println("Koneksi Gagal " + e.toString());
                 }
             }
         } catch (Exception e) {
@@ -1525,17 +1543,17 @@ public class DashboardPages extends javax.swing.JFrame {
 
     private void cmbJenisPeliharaanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbJenisPeliharaanActionPerformed
         String Kode = "";
-        try{
-            Con=Konek.getKoneksiDatabase();
+        try {
+            Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
-            Sql = "select * from load_jenis_peliharaan where jenis_peliharaan='"+cmbJenisPeliharaan.getSelectedItem().toString()+"'";
-            Rs=Stm.executeQuery(Sql);
-            while(Rs.next()) {
-                Kode= Rs.getString("jenis_hewan");
+            Sql = "select * from load_jenis_peliharaan where jenis_peliharaan='" + cmbJenisPeliharaan.getSelectedItem().toString() + "'";
+            Rs = Stm.executeQuery(Sql);
+            while (Rs.next()) {
+                Kode = Rs.getString("jenis_hewan");
             }
             textFieldJenisHewan.setText(Kode);
-        } catch(SQLException e){
-            System.out.println("koneksi gagal"+e.toString());
+        } catch (SQLException e) {
+            System.out.println("koneksi gagal" + e.toString());
         }
     }//GEN-LAST:event_cmbJenisPeliharaanActionPerformed
 
@@ -1547,21 +1565,21 @@ public class DashboardPages extends javax.swing.JFrame {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = null;
-            Sql = "delete from table_data_periksa where no_urut = '"+textFieldNoUrut.getText()+"'  ";
-            Stm= Con.createStatement();
-            int AdaPerubahanRecord= Stm.executeUpdate(Sql);
+            Sql = "delete from table_data_periksa where no_urut = '" + textFieldNoUrut.getText() + "'  ";
+            Stm = Con.createStatement();
+            int AdaPerubahanRecord = Stm.executeUpdate(Sql);
             tampilDataTable();
-            if (AdaPerubahanRecord>0){
-                JOptionPane.showMessageDialog(this,"Data Berhasil Di Hapus", "Informasi",JOptionPane.INFORMATION_MESSAGE);
-            }else
-            JOptionPane.showMessageDialog(this,"Data Gagal Di Hapus", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+            if (AdaPerubahanRecord > 0) {
+                JOptionPane.showMessageDialog(this, "Data Berhasil Di Hapus", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Data Gagal Di Hapus", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            }
             Stm.close();
             kosongObjek();
+            textFieldNoUrut.setEnabled(true);
             btnSave.setEnabled(true);
-            btnEdit.setEnabled(false);
-            btnDelete.setEnabled(false);
-        } catch (SQLException e){
-            System.out.println("Koneksi Gagal " +e.toString());
+        } catch (SQLException e) {
+            System.out.println("Koneksi Gagal " + e.toString());
         }
         tampilDataTable();
     }//GEN-LAST:event_btnDeleteActionPerformed
@@ -1571,32 +1589,32 @@ public class DashboardPages extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        String Tampilan="yyyy-MM-dd";
+        String Tampilan = "yyyy-MM-dd";
         SimpleDateFormat Fm = new SimpleDateFormat(Tampilan);
         String TanggalPeriksa = String.valueOf(Fm.format(jdateTanggalPeriksa.getDate()));
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = null;
-            Sql = "UPDATE table_data_periksa set tanggal_periksa = '"+TanggalPeriksa+"', nama = '"+textFieldNama.getText()+"', "
-            + "alamat = '"+textFieldAlamat.getText()+"', no_hp = '"+textFieldNoHp.getText()+"', jenis_peliharaan = '"
-            +cmbJenisPeliharaan.getSelectedItem()+"', jenis_hewan = '"+textFieldJenisHewan.getText()+"', nama_hewan = '"
-            +textFieldNamaHewan.getText()+"', nama_dokter = '"+textFieldNamaDokter.getText()+"', layanan = '"
-            +cmbJenisLayanan.getSelectedItem()+"', treatment = '"
-            +cmbJenisTreatment.getSelectedItem()+"' WHERE no_urut = '"+textFieldNoUrut.getText()+"'";
-            Stm= Con.createStatement();
-            int AdaPerubahanRecord= Stm.executeUpdate(Sql);
+            Sql = "UPDATE table_data_periksa set tanggal_periksa = '" + TanggalPeriksa + "', nama = '" + textFieldNama.getText() + "', "
+                    + "alamat = '" + textFieldAlamat.getText() + "', no_hp = '" + textFieldNoHp.getText() + "', jenis_peliharaan = '"
+                    + cmbJenisPeliharaan.getSelectedItem() + "', jenis_hewan = '" + textFieldJenisHewan.getText() + "', nama_hewan = '"
+                    + textFieldNamaHewan.getText() + "', nama_dokter = '" + textFieldNamaDokter.getText() + "', layanan = '"
+                    + cmbJenisLayanan.getSelectedItem() + "', treatment = '"
+                    + cmbJenisTreatment.getSelectedItem() + "' WHERE no_urut = '" + textFieldNoUrut.getText() + "'";
+            Stm = Con.createStatement();
+            int AdaPerubahanRecord = Stm.executeUpdate(Sql);
             tampilDataTable();
-            if (AdaPerubahanRecord>0){
-                JOptionPane.showMessageDialog(this,"Data Berhasil Di Edit", "Informasi",JOptionPane.INFORMATION_MESSAGE);
-            }else
-            JOptionPane.showMessageDialog(this,"Data Gagal Di Edit", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+            if (AdaPerubahanRecord > 0) {
+                JOptionPane.showMessageDialog(this, "Data Berhasil Di Edit", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Data Gagal Di Edit", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            }
             Stm.close();
             kosongObjek();
+            textFieldNoUrut.setEnabled(true);
             btnSave.setEnabled(true);
-            btnEdit.setEnabled(false);
-            btnDelete.setEnabled(false);
         } catch (Exception e) {
-            System.out.println("Koneksi Gagal " +e.toString());
+            System.out.println("Koneksi Gagal " + e.toString());
         }
         tampilDataTable();
     }//GEN-LAST:event_btnEditActionPerformed
@@ -1604,36 +1622,36 @@ public class DashboardPages extends javax.swing.JFrame {
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         try {
             Con = Konek.getKoneksiDatabase();
-            Sql = "Select * from table_data_periksa where no_urut='" +textFieldNoUrut.getText() + "'";
-            Stm= Con.createStatement();
+            Sql = "Select * from table_data_periksa where no_urut='" + textFieldNoUrut.getText() + "'";
+            Stm = Con.createStatement();
             Rs2 = Stm.executeQuery(Sql);
-            if (Rs2.next()){
-                JOptionPane.showMessageDialog(this,"Silahkan Memasukan Nomor Urut Baru", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            if (Rs2.next()) {
+                JOptionPane.showMessageDialog(this, "Silahkan Memasukan Nomor Urut Baru", "Informasi", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                String Tampilan="yyyy-MM-dd";
+                String Tampilan = "yyyy-MM-dd";
                 SimpleDateFormat Fm = new SimpleDateFormat(Tampilan);
                 String TanggalPeriksa = String.valueOf(Fm.format(jdateTanggalPeriksa.getDate()));
                 try {
                     Con = Konek.getKoneksiDatabase();
                     Stm = null;
                     Sql = "insert into table_data_periksa (id, no_urut, tanggal_periksa, nama, alamat, no_hp, "
-                    + "jenis_peliharaan, jenis_hewan, nama_hewan, nama_dokter, layanan, treatment) VALUES (NULL, '"
-                    +textFieldNoUrut.getText()+"', '"+TanggalPeriksa+"', '"+textFieldNama.getText()+"', '"
-                    +textFieldAlamat.getText()+"', '"+textFieldNoHp.getText()+"', '"+cmbJenisPeliharaan.getSelectedItem()+"', '"
-                    +textFieldJenisHewan.getText()+"', '"+textFieldNamaHewan.getText()+"', '"+textFieldNamaDokter.getText()+"', '"
-                    +cmbJenisLayanan.getSelectedItem()+"', '"+cmbJenisTreatment.getSelectedItem()+"')";
+                            + "jenis_peliharaan, jenis_hewan, nama_hewan, nama_dokter, layanan, treatment) VALUES (NULL, '"
+                            + textFieldNoUrut.getText() + "', '" + TanggalPeriksa + "', '" + textFieldNama.getText() + "', '"
+                            + textFieldAlamat.getText() + "', '" + textFieldNoHp.getText() + "', '" + cmbJenisPeliharaan.getSelectedItem() + "', '"
+                            + textFieldJenisHewan.getText() + "', '" + textFieldNamaHewan.getText() + "', '" + textFieldNamaDokter.getText() + "', '"
+                            + cmbJenisLayanan.getSelectedItem() + "', '" + cmbJenisTreatment.getSelectedItem() + "')";
                     Stm = Con.createStatement();
                     int AdaPenambahanRecord = Stm.executeUpdate(Sql);
                     tampilDataTable();
-                    if (AdaPenambahanRecord>0) {
-                        JOptionPane.showMessageDialog(this,"Data Berhasil Tersimpan", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+                    if (AdaPenambahanRecord > 0) {
+                        JOptionPane.showMessageDialog(this, "Data Berhasil Tersimpan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(this,"Data Gagal Tersimpan", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Data Gagal Tersimpan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
                     }
                     Stm.close();
                     kosongObjek();
                 } catch (SQLException e) {
-                    System.out.println("Koneksi Gagal " +e.toString());
+                    System.out.println("Koneksi Gagal " + e.toString());
                 }
                 tampilDataTable();
             }
@@ -1644,18 +1662,18 @@ public class DashboardPages extends javax.swing.JFrame {
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
         kosongObjek();
-        btnDelete.setEnabled(false);
-        btnEdit.setEnabled(false);
+        textFieldNoUrut.setEnabled(true);
+        btnSave.setEnabled(true);
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void textFieldNoUrutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldNoUrutActionPerformed
         try {
             Con = Konek.getKoneksiDatabase();
-            Sql = "Select * from table_data_periksa where no_urut='" +textFieldNoUrut.getText() + "'";
-            Stm= Con.createStatement();
+            Sql = "Select * from table_data_periksa where no_urut='" + textFieldNoUrut.getText() + "'";
+            Stm = Con.createStatement();
             Rs2 = Stm.executeQuery(Sql);
-            if (Rs2.next()){
-                JOptionPane.showMessageDialog(this,"Silahkan Melakukan Edit Informasi", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            if (Rs2.next()) {
+                JOptionPane.showMessageDialog(this, "Silahkan Melakukan Edit Informasi", "Informasi", JOptionPane.INFORMATION_MESSAGE);
                 btnSave.setEnabled(false);
 
                 jdateTanggalPeriksa.setDate(Rs2.getDate("tanggal_periksa"));
@@ -1668,13 +1686,7 @@ public class DashboardPages extends javax.swing.JFrame {
                 textFieldNamaDokter.setText(Rs2.getString("nama_dokter"));
                 cmbJenisLayanan.setSelectedItem(Rs2.getString("layanan"));
                 cmbJenisTreatment.setSelectedItem(Rs2.getString("treatment"));
-
-                btnDelete.setEnabled(true);
-                btnEdit.setEnabled(true);
             } else {
-                btnSave.setEnabled(true);
-                btnClear.setEnabled(true);
-
                 jdateTanggalPeriksa.setDate(null);
                 textFieldNama.setText("");
                 textFieldAlamat.setText("");
@@ -1701,7 +1713,7 @@ public class DashboardPages extends javax.swing.JFrame {
             }
 
             textFieldNoUrut.setText(jTable1.getValueAt(i, 0).toString());
-            Date date = new SimpleDateFormat("yyyy-MM-dd").parse((String)Dtm.getValueAt(i, 1));
+            Date date = new SimpleDateFormat("yyyy-MM-dd").parse((String) Dtm.getValueAt(i, 1));
             jdateTanggalPeriksa.setDate(date);
             textFieldNama.setText(jTable1.getValueAt(i, 2).toString());
             textFieldAlamat.setText(jTable1.getValueAt(i, 3).toString());
@@ -1712,7 +1724,8 @@ public class DashboardPages extends javax.swing.JFrame {
             textFieldNamaDokter.setText(jTable1.getValueAt(i, 8).toString());
             cmbJenisLayanan.setSelectedItem(jTable1.getValueAt(i, 9));
             cmbJenisTreatment.setSelectedItem(jTable1.getValueAt(i, 10));
-            
+
+            textFieldNoUrut.setEnabled(false);
             btnEdit.setEnabled(true);
             btnDelete.setEnabled(true);
             btnSave.setEnabled(false);
@@ -1728,11 +1741,11 @@ public class DashboardPages extends javax.swing.JFrame {
     private void textFieldKodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldKodeActionPerformed
         try {
             Con = Konek.getKoneksiDatabase();
-            Sql = "Select * from load_jenis_hewan where kode='" +textFieldKode.getText() + "'";
-            Stm= Con.createStatement();
+            Sql = "Select * from load_jenis_hewan where kode='" + textFieldKode.getText() + "'";
+            Stm = Con.createStatement();
             Rs2 = Stm.executeQuery(Sql);
-            if (Rs2.next()){
-                JOptionPane.showMessageDialog(this,"Silahkan Memasukkan Kode Hewan Lain", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            if (Rs2.next()) {
+                JOptionPane.showMessageDialog(this, "Silahkan Memasukkan Kode Hewan Lain", "Informasi", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 textFieldJenisHewan.setEnabled(true);
                 textFieldJenisHewan.requestFocus();
@@ -1745,30 +1758,30 @@ public class DashboardPages extends javax.swing.JFrame {
     private void btnAdd1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdd1ActionPerformed
         try {
             Con = Konek.getKoneksiDatabase();
-            Sql = "Select * from load_jenis_hewan where kode='" +textFieldKode.getText() + "'";
-            Stm= Con.createStatement();
+            Sql = "Select * from load_jenis_hewan where kode='" + textFieldKode.getText() + "'";
+            Stm = Con.createStatement();
             Rs2 = Stm.executeQuery(Sql);
-            if (Rs2.next()){
-                JOptionPane.showMessageDialog(this,"Silahkan Memasukkan Kode Hewan Lain", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            if (Rs2.next()) {
+                JOptionPane.showMessageDialog(this, "Silahkan Memasukkan Kode Hewan Lain", "Informasi", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 try {
                     Con = Konek.getKoneksiDatabase();
                     Stm = null;
                     Sql = "insert into load_jenis_hewan (id, kode, jenis_hewan) VALUES (NULL, '"
-                    +textFieldKode.getText()+"', '"+textFieldJenisHewan1.getText()+"')";
+                            + textFieldKode.getText() + "', '" + textFieldJenisHewan1.getText() + "')";
                     Stm = Con.createStatement();
                     int AdaPenambahanRecord = Stm.executeUpdate(Sql);
-                    if (AdaPenambahanRecord>0) {
-                        JOptionPane.showMessageDialog(this,"Data Berhasil Tersimpan", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+                    if (AdaPenambahanRecord > 0) {
+                        JOptionPane.showMessageDialog(this, "Data Berhasil Tersimpan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(this,"Data Gagal Tersimpan", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Data Gagal Tersimpan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
                     }
                     Stm.close();
                     AddDataJenisHewanBaru();
                     textFieldKode.setText("");
                     textFieldJenisHewan1.setText("");
                 } catch (SQLException e) {
-                    System.out.println("Koneksi Gagal " +e.toString());
+                    System.out.println("Koneksi Gagal " + e.toString());
                 }
             }
         } catch (Exception e) {
@@ -1783,24 +1796,24 @@ public class DashboardPages extends javax.swing.JFrame {
     private void btnAdd2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdd2ActionPerformed
         try {
             Con = Konek.getKoneksiDatabase();
-            Sql = "Select * from load_jenis_peliharaan where kode='" +textFieldKode1.getText() + "'";
-            Stm= Con.createStatement();
+            Sql = "Select * from load_jenis_peliharaan where kode='" + textFieldKode1.getText() + "'";
+            Stm = Con.createStatement();
             Rs2 = Stm.executeQuery(Sql);
-            if (Rs2.next()){
-                JOptionPane.showMessageDialog(this,"Silahkan Memasukkan Kode Lain", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            if (Rs2.next()) {
+                JOptionPane.showMessageDialog(this, "Silahkan Memasukkan Kode Lain", "Informasi", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 try {
                     Con = Konek.getKoneksiDatabase();
                     Stm = null;
                     Sql = "insert into load_jenis_peliharaan (id, kode, jenis_peliharaan, jenis_hewan) VALUES (NULL, '"
-                    +textFieldKode1.getText()+"', '"+textFieldJenisPeliharaan.getText()+"', '"
-                    +cmbJenisHewan.getSelectedItem()+"')";
+                            + textFieldKode1.getText() + "', '" + textFieldJenisPeliharaan.getText() + "', '"
+                            + cmbJenisHewan.getSelectedItem() + "')";
                     Stm = Con.createStatement();
                     int AdaPenambahanRecord = Stm.executeUpdate(Sql);
-                    if (AdaPenambahanRecord>0) {
-                        JOptionPane.showMessageDialog(this,"Data Berhasil Tersimpan", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+                    if (AdaPenambahanRecord > 0) {
+                        JOptionPane.showMessageDialog(this, "Data Berhasil Tersimpan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(this,"Data Gagal Tersimpan", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Data Gagal Tersimpan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
                     }
                     Stm.close();
                     AddDataJenisPeliharaanBaru();
@@ -1808,7 +1821,7 @@ public class DashboardPages extends javax.swing.JFrame {
                     textFieldJenisPeliharaan.setText("");
                     cmbJenisHewan.setSelectedIndex(0);
                 } catch (SQLException e) {
-                    System.out.println("Koneksi Gagal " +e.toString());
+                    System.out.println("Koneksi Gagal " + e.toString());
                 }
             }
         } catch (Exception e) {
@@ -1819,11 +1832,11 @@ public class DashboardPages extends javax.swing.JFrame {
     private void textFieldKode1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldKode1ActionPerformed
         try {
             Con = Konek.getKoneksiDatabase();
-            Sql = "Select * from load_jenis_peliharaan where kode='" +textFieldKode1.getText() + "'";
-            Stm= Con.createStatement();
+            Sql = "Select * from load_jenis_peliharaan where kode='" + textFieldKode1.getText() + "'";
+            Stm = Con.createStatement();
             Rs2 = Stm.executeQuery(Sql);
-            if (Rs2.next()){
-                JOptionPane.showMessageDialog(this,"Silahkan Memasukkan Kode Lain", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            if (Rs2.next()) {
+                JOptionPane.showMessageDialog(this, "Silahkan Memasukkan Kode Lain", "Informasi", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 textFieldJenisPeliharaan.requestFocus();
             }
@@ -1839,11 +1852,11 @@ public class DashboardPages extends javax.swing.JFrame {
     private void textFieldKode2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldKode2ActionPerformed
         try {
             Con = Konek.getKoneksiDatabase();
-            Sql = "Select * from load_jenis_layanan where kode='" +textFieldKode2.getText() + "'";
-            Stm= Con.createStatement();
+            Sql = "Select * from load_jenis_layanan where kode='" + textFieldKode2.getText() + "'";
+            Stm = Con.createStatement();
             Rs2 = Stm.executeQuery(Sql);
-            if (Rs2.next()){
-                JOptionPane.showMessageDialog(this,"Silahkan Memasukkan Kode Jenis Layanan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            if (Rs2.next()) {
+                JOptionPane.showMessageDialog(this, "Silahkan Memasukkan Kode Jenis Layanan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 textFieldJenisLayanan.setEnabled(true);
                 textFieldJenisLayanan.requestFocus();
@@ -1856,30 +1869,30 @@ public class DashboardPages extends javax.swing.JFrame {
     private void btnAdd3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdd3ActionPerformed
         try {
             Con = Konek.getKoneksiDatabase();
-            Sql = "Select * from load_jenis_layanan where kode='" +textFieldKode2.getText() + "'";
-            Stm= Con.createStatement();
+            Sql = "Select * from load_jenis_layanan where kode='" + textFieldKode2.getText() + "'";
+            Stm = Con.createStatement();
             Rs2 = Stm.executeQuery(Sql);
-            if (Rs2.next()){
-                JOptionPane.showMessageDialog(this,"Silahkan Memasukkan Kode Jenis Layanan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            if (Rs2.next()) {
+                JOptionPane.showMessageDialog(this, "Silahkan Memasukkan Kode Jenis Layanan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 try {
                     Con = Konek.getKoneksiDatabase();
                     Stm = null;
                     Sql = "insert into load_jenis_layanan (id, kode, layanan) VALUES (NULL, '"
-                    +textFieldKode2.getText()+"', '"+textFieldJenisLayanan.getText()+"')";
+                            + textFieldKode2.getText() + "', '" + textFieldJenisLayanan.getText() + "')";
                     Stm = Con.createStatement();
                     int AdaPenambahanRecord = Stm.executeUpdate(Sql);
-                    if (AdaPenambahanRecord>0) {
-                        JOptionPane.showMessageDialog(this,"Data Berhasil Tersimpan", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+                    if (AdaPenambahanRecord > 0) {
+                        JOptionPane.showMessageDialog(this, "Data Berhasil Tersimpan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(this,"Data Gagal Tersimpan", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Data Gagal Tersimpan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
                     }
                     Stm.close();
                     AddDataJenisLayananBaru();
                     textFieldKode2.setText("");
                     textFieldJenisLayanan.setText("");
                 } catch (SQLException e) {
-                    System.out.println("Koneksi Gagal " +e.toString());
+                    System.out.println("Koneksi Gagal " + e.toString());
                 }
             }
         } catch (Exception e) {
@@ -1894,11 +1907,11 @@ public class DashboardPages extends javax.swing.JFrame {
     private void textFieldKode3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldKode3ActionPerformed
         try {
             Con = Konek.getKoneksiDatabase();
-            Sql = "Select * from load_treatment where kode='" +textFieldKode3.getText() + "'";
-            Stm= Con.createStatement();
+            Sql = "Select * from load_treatment where kode='" + textFieldKode3.getText() + "'";
+            Stm = Con.createStatement();
             Rs2 = Stm.executeQuery(Sql);
-            if (Rs2.next()){
-                JOptionPane.showMessageDialog(this,"Silahkan Memasukkan Kode Treatment Lain", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            if (Rs2.next()) {
+                JOptionPane.showMessageDialog(this, "Silahkan Memasukkan Kode Treatment Lain", "Informasi", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 textFieldJenisTreatment.setEnabled(true);
                 textFieldJenisTreatment.requestFocus();
@@ -1911,36 +1924,129 @@ public class DashboardPages extends javax.swing.JFrame {
     private void btnAdd4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdd4ActionPerformed
         try {
             Con = Konek.getKoneksiDatabase();
-            Sql = "Select * from load_treatment where kode='" +textFieldKode3.getText() + "'";
-            Stm= Con.createStatement();
+            Sql = "Select * from load_treatment where kode='" + textFieldKode3.getText() + "'";
+            Stm = Con.createStatement();
             Rs2 = Stm.executeQuery(Sql);
-            if (Rs2.next()){
-                JOptionPane.showMessageDialog(this,"Silahkan Memasukkan Kode Treatment Lain", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            if (Rs2.next()) {
+                JOptionPane.showMessageDialog(this, "Silahkan Memasukkan Kode Treatment Lain", "Informasi", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 try {
                     Con = Konek.getKoneksiDatabase();
                     Stm = null;
                     Sql = "insert into load_treatment (id, kode, jenis_treatment) VALUES (NULL, '"
-                    +textFieldKode3.getText()+"', '"+textFieldJenisTreatment.getText()+"')";
+                            + textFieldKode3.getText() + "', '" + textFieldJenisTreatment.getText() + "')";
                     Stm = Con.createStatement();
                     int AdaPenambahanRecord = Stm.executeUpdate(Sql);
-                    if (AdaPenambahanRecord>0) {
-                        JOptionPane.showMessageDialog(this,"Data Berhasil Tersimpan", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+                    if (AdaPenambahanRecord > 0) {
+                        JOptionPane.showMessageDialog(this, "Data Berhasil Tersimpan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(this,"Data Gagal Tersimpan", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Data Gagal Tersimpan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
                     }
                     Stm.close();
                     AddDataJenisTreatmentBaru();
                     textFieldKode3.setText("");
                     textFieldJenisTreatment.setText("");
                 } catch (SQLException e) {
-                    System.out.println("Koneksi Gagal " +e.toString());
+                    System.out.println("Koneksi Gagal " + e.toString());
                 }
             }
         } catch (Exception e) {
             System.out.println("koneksi gagal " + e.toString());
         }
     }//GEN-LAST:event_btnAdd4ActionPerformed
+
+    private void btnExportExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportExcelActionPerformed
+        try {
+            JFileChooser jFileChooser = new JFileChooser();
+            jFileChooser.showSaveDialog(this);
+            File saveFile = jFileChooser.getSelectedFile();
+
+            if (saveFile != null) {
+                saveFile = new File(saveFile.toString() + ".xlsx");
+
+                Con = Konek.getKoneksiDatabase();
+                Stm = Con.createStatement();
+                Sql = "SELECT table_data_periksa.no_urut AS NoUrut, "
+                        + "table_data_periksa.tanggal_periksa AS TanggalPeriksa, "
+                        + "table_data_periksa.nama AS Nama, "
+                        + "table_data_periksa.alamat AS Alamat, "
+                        + "table_data_periksa.no_hp AS NoHp, "
+                        + "table_data_periksa.jenis_peliharaan AS JenisPeliharaan, "
+                        + "table_data_periksa.jenis_hewan AS JenisHewan, "
+                        + "table_data_periksa.nama_hewan AS NamaHewan, "
+                        + "table_data_periksa.nama_dokter AS NamaDokter, "
+                        + "table_data_periksa.layanan AS Layanan, "
+                        + "table_data_periksa.treatment AS Treatment "
+                        + "FROM table_data_periksa";
+                Rs = Stm.executeQuery(Sql);
+
+                XSSFWorkbook workbook = new XSSFWorkbook();
+                XSSFSheet spreadSheet = workbook.createSheet("DataPeriksa");
+                XSSFRow row = spreadSheet.createRow(1);
+                XSSFCell cell;
+                cell = row.createCell(0);
+                cell.setCellValue("No. Urut");
+                cell = row.createCell(1);
+                cell.setCellValue("Tanggal Periksa");
+                cell = row.createCell(2);
+                cell.setCellValue("Nama");
+                cell = row.createCell(3);
+                cell.setCellValue("Alamat");
+                cell = row.createCell(4);
+                cell.setCellValue("No. Hp");
+                cell = row.createCell(5);
+                cell.setCellValue("Jenis Peliharaan");
+                cell = row.createCell(6);
+                cell.setCellValue("Jenis Hewan");
+                cell = row.createCell(7);
+                cell.setCellValue("Nama Hewan");
+                cell = row.createCell(8);
+                cell.setCellValue("Nama Dokter");
+                cell = row.createCell(9);
+                cell.setCellValue("Jenis Layanan");
+                cell = row.createCell(10);
+                cell.setCellValue("Jenis Treatment");
+
+                int i = 2;
+                while (Rs.next()) {
+                    row = spreadSheet.createRow(i);
+                    cell = row.createCell(0);
+                    cell.setCellValue(Rs.getString("NoUrut"));
+                    cell = row.createCell(1);
+                    cell.setCellValue(Rs.getString("TanggalPeriksa"));
+                    cell = row.createCell(2);
+                    cell.setCellValue(Rs.getString("Nama"));
+                    cell = row.createCell(3);
+                    cell.setCellValue(Rs.getString("Alamat"));
+                    cell = row.createCell(4);
+                    cell.setCellValue(Rs.getString("NoHp"));
+                    cell = row.createCell(5);
+                    cell.setCellValue(Rs.getString("JenisPeliharaan"));
+                    cell = row.createCell(6);
+                    cell.setCellValue(Rs.getString("JenisHewan"));
+                    cell = row.createCell(7);
+                    cell.setCellValue(Rs.getString("NamaHewan"));
+                    cell = row.createCell(8);
+                    cell.setCellValue(Rs.getString("NamaDokter"));
+                    cell = row.createCell(9);
+                    cell.setCellValue(Rs.getString("Layanan"));
+                    cell = row.createCell(10);
+                    cell.setCellValue(Rs.getString("Treatment"));
+                    i++;
+                }
+                //FileOutputStream out = new FileOutputStream(new File("DataPeriksa.xlsx"));
+                FileOutputStream out = new FileOutputStream(new File(saveFile.toString()));
+                workbook.write(out);
+                out.close();
+                JOptionPane.showMessageDialog(this, "Export Berhasil", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+                Con.close();
+            } else {
+                JOptionPane.showMessageDialog(null, "Export tidak berhasil");
+            }
+        } catch (Exception e) {
+            System.out.println("Export gagal " + e.toString());
+        }
+    }//GEN-LAST:event_btnExportExcelActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1986,6 +2092,7 @@ public class DashboardPages extends javax.swing.JFrame {
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btnExportExcel;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnSearch;
     private javax.swing.JComboBox<String> cmbJenisHewan;

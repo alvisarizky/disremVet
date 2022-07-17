@@ -5,16 +5,33 @@
  */
 package mainKlinikKu;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
@@ -25,69 +42,88 @@ public class DataPage extends javax.swing.JFrame {
     Koneksi Konek = new Koneksi();
     private Connection Con;
     Statement Stm;
-    ResultSet Rs,Rs2;
+    ResultSet Rs, Rs2;
     String Sql;
     DefaultTableModel Dtm;
-    
+
     public DataPage() {
         initComponents();
         LoadDataJenisPeliharaan();
         LoadDataTreatment();
         LoadDataJenisLayanan();
-        
+
         tampilDataTable();
-                
+
         btnEdit.setEnabled(false);
         btnDelete.setEnabled(false);
         btnSave.setEnabled(false);
         btnClear.setEnabled(false);
-        
+
         textFieldJenisHewan.setEnabled(false);
     }
-    
-    private void LoadDataJenisPeliharaan(){
+
+//    public void Export(File file) {
+//        try {
+//            Dtm = (DefaultTableModel) jTable1.getModel();
+//            FileWriter fw = new FileWriter(file);
+//            for (int i = 0; i < Dtm.getColumnCount(); i++) {
+//                fw.write(Dtm.getColumnName(i) + "\t");
+//            }
+//            fw.write("\n");
+//            for (int i = 0; i < Dtm.getRowCount(); i++) {
+//                for (int j = 0; j < Dtm.getColumnCount(); j++) {
+//                    fw.write(Dtm.getValueAt(i, j).toString() + "\t");
+//                }
+//                fw.write("\n");
+//            }
+//            fw.close();
+//        } catch (IOException e) {
+//            System.out.println(e);
+//        }
+//    }
+    private void LoadDataJenisPeliharaan() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
             Sql = "select * from load_jenis_peliharaan";
-            Rs=Stm.executeQuery(Sql);
-            while(Rs.next()) {
+            Rs = Stm.executeQuery(Sql);
+            while (Rs.next()) {
                 cmbJenisPeliharaan.addItem(Rs.getString("jenis_peliharaan"));
             }
         } catch (SQLException e) {
-            System.out.println("Koneksi Gagal : "+e.toString());
+            System.out.println("Koneksi Gagal : " + e.toString());
         }
     }
-    
-    private void LoadDataJenisLayanan(){
+
+    private void LoadDataJenisLayanan() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
             Sql = "select * from load_jenis_layanan";
-            Rs=Stm.executeQuery(Sql);
-            while(Rs.next()) {
+            Rs = Stm.executeQuery(Sql);
+            while (Rs.next()) {
                 cmbJenisLayanan.addItem(Rs.getString("layanan"));
             }
         } catch (SQLException e) {
-            System.out.println("Koneksi Gagal : "+e.toString());
+            System.out.println("Koneksi Gagal : " + e.toString());
         }
     }
-    
-    private void LoadDataTreatment(){
+
+    private void LoadDataTreatment() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
             Sql = "select * from load_treatment";
-            Rs=Stm.executeQuery(Sql);
-            while(Rs.next()) {
+            Rs = Stm.executeQuery(Sql);
+            while (Rs.next()) {
                 cmbJenisTreatment.addItem(Rs.getString("jenis_treatment"));
             }
         } catch (SQLException e) {
-            System.out.println("Koneksi Gagal : "+e.toString());
+            System.out.println("Koneksi Gagal : " + e.toString());
         }
     }
-    
-    void nonAktifField(){
+
+    void nonAktifField() {
         jdateTanggalPeriksa.setEnabled(false);
         textFieldNama.setEnabled(false);
         textFieldAlamat.setEnabled(false);
@@ -97,8 +133,8 @@ public class DataPage extends javax.swing.JFrame {
         textFieldNamaDokter.setEnabled(false);
         cmbJenisTreatment.setEnabled(false);
     }
-    
-    void AktifField(){
+
+    void AktifField() {
         jdateTanggalPeriksa.setEnabled(true);
         textFieldNama.setEnabled(true);
         textFieldAlamat.setEnabled(true);
@@ -108,8 +144,8 @@ public class DataPage extends javax.swing.JFrame {
         textFieldNamaDokter.setEnabled(true);
         cmbJenisTreatment.setEnabled(true);
     }
-    
-    void kosongObjek(){
+
+    void kosongObjek() {
         textFieldNoUrut.setText("");
         textFieldNama.setText("");
         textFieldAlamat.setText("");
@@ -117,14 +153,14 @@ public class DataPage extends javax.swing.JFrame {
         textFieldJenisHewan.setText("");
         textFieldNamaHewan.setText("");
         textFieldNamaDokter.setText("");
-        
+
         jdateTanggalPeriksa.setDate(null);
-        
+
         cmbJenisPeliharaan.setSelectedIndex(0);
         cmbJenisTreatment.setSelectedIndex(0);
     }
-    
-    private void AturJTable(JTable Lihat, int Lebar[]){
+
+    private void AturJTable(JTable Lihat, int Lebar[]) {
         try {
             Lihat.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             int banyak = Lihat.getColumnCount();
@@ -134,33 +170,34 @@ public class DataPage extends javax.swing.JFrame {
                 Lihat.setRowHeight(30);
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "salah "+e);
+            JOptionPane.showMessageDialog(null, "salah " + e);
         }
     }
-    
-    private void TampilModelJTabel(){
+
+    private void TampilModelJTabel() {
         try {
-            String[]kolom = {
-                "No. Urut","Tanggal Periksa","Nama","Alamat","No. Hp",
-                "Jenis Peliharaan","Jenis Hewan","Nama Hewan","Nama Dokter","Jenis Layanan","Jenis Treatment"
+            String[] kolom = {
+                "No. Urut", "Tanggal Periksa", "Nama", "Alamat", "No. Hp",
+                "Jenis Peliharaan", "Jenis Hewan", "Nama Hewan", "Nama Dokter", "Jenis Layanan", "Jenis Treatment"
             };
-            Dtm = new DefaultTableModel(null, kolom){
+            Dtm = new DefaultTableModel(null, kolom) {
                 @Override
-                public boolean  isCellEditable(int rowIndex, int columnIndex){
+                public boolean isCellEditable(int rowIndex, int columnIndex) {
                     return false;
-                };
+                }
+            ;
             };
             jTable1.setModel(Dtm);
             AturJTable(jTable1, new int[]{
-                200,200,150,300,100,
-                150,150,150,200,150,150
+                200, 200, 150, 300, 100,
+                150, 150, 150, 200, 150, 150
             });
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "salah "+e);
+            JOptionPane.showMessageDialog(null, "salah " + e);
         }
     }
-    
-    void tampilDataTable(){
+
+    void tampilDataTable() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
@@ -191,8 +228,7 @@ public class DataPage extends javax.swing.JFrame {
                         Rs.getString("NamaHewan"),
                         Rs.getString("NamaDokter"),
                         Rs.getString("Layanan"),
-                        Rs.getString("Treatment"),
-                    });
+                        Rs.getString("Treatment"),});
                     jTable1.setModel(Dtm);
                 }
             } catch (Exception e) {
@@ -202,8 +238,8 @@ public class DataPage extends javax.swing.JFrame {
             System.out.println("koneksi gagal " + e.toString());
         }
     }
-    
-    void cariDataTable(){
+
+    void cariDataTable() {
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
@@ -221,7 +257,7 @@ public class DataPage extends javax.swing.JFrame {
                         + "table_data_periksa.layanan AS Layanan, "
                         + "table_data_periksa.treatment AS Treatment "
                         + "FROM table_data_periksa "
-                        + "WHERE nama LIKE '%"+textFieldSearch.getText()+"%'";
+                        + "WHERE nama LIKE '%" + textFieldSearch.getText() + "%'";
                 Rs = Stm.executeQuery(Sql);
                 while (Rs.next()) {
                     Dtm.addRow(new Object[]{
@@ -235,8 +271,7 @@ public class DataPage extends javax.swing.JFrame {
                         Rs.getString("NamaHewan"),
                         Rs.getString("NamaDokter"),
                         Rs.getString("Layanan"),
-                        Rs.getString("Treatment"),
-                    });
+                        Rs.getString("Treatment"),});
                     jTable1.setModel(Dtm);
                 }
             } catch (Exception e) {
@@ -284,6 +319,7 @@ public class DataPage extends javax.swing.JFrame {
         textFieldJenisHewan = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
         cmbJenisLayanan = new javax.swing.JComboBox<>();
+        btnExportExcel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -415,6 +451,14 @@ public class DataPage extends javax.swing.JFrame {
 
         cmbJenisLayanan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "[Jenis Layanan]" }));
 
+        btnExportExcel.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        btnExportExcel.setText("Export(Excel)");
+        btnExportExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportExcelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -433,6 +477,8 @@ public class DataPage extends javax.swing.JFrame {
                         .addComponent(textFieldSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnSearch)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnExportExcel)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -529,7 +575,8 @@ public class DataPage extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(textFieldSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSearch))
+                    .addComponent(btnSearch)
+                    .addComponent(btnExportExcel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -546,17 +593,17 @@ public class DataPage extends javax.swing.JFrame {
 
     private void cmbJenisPeliharaanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbJenisPeliharaanActionPerformed
         String Kode = "";
-        try{
-            Con=Konek.getKoneksiDatabase();
+        try {
+            Con = Konek.getKoneksiDatabase();
             Stm = Con.createStatement();
-            Sql = "select * from load_jenis_peliharaan where jenis_peliharaan='"+cmbJenisPeliharaan.getSelectedItem().toString()+"'";
-            Rs=Stm.executeQuery(Sql);
-            while(Rs.next()) {
-                Kode= Rs.getString("jenis_hewan");
+            Sql = "select * from load_jenis_peliharaan where jenis_peliharaan='" + cmbJenisPeliharaan.getSelectedItem().toString() + "'";
+            Rs = Stm.executeQuery(Sql);
+            while (Rs.next()) {
+                Kode = Rs.getString("jenis_hewan");
             }
             textFieldJenisHewan.setText(Kode);
-        } catch(SQLException e){
-            System.out.println("koneksi gagal"+e.toString());
+        } catch (SQLException e) {
+            System.out.println("koneksi gagal" + e.toString());
         }
     }//GEN-LAST:event_cmbJenisPeliharaanActionPerformed
 
@@ -567,7 +614,7 @@ public class DataPage extends javax.swing.JFrame {
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        String Tampilan="yyyy-MM-dd";
+        String Tampilan = "yyyy-MM-dd";
         SimpleDateFormat Fm = new SimpleDateFormat(Tampilan);
         String TanggalPeriksa = String.valueOf(Fm.format(jdateTanggalPeriksa.getDate()));
         try {
@@ -575,54 +622,55 @@ public class DataPage extends javax.swing.JFrame {
             Stm = null;
             Sql = "insert into table_data_periksa (id, no_urut, tanggal_periksa, nama, alamat, no_hp, "
                     + "jenis_peliharaan, jenis_hewan, nama_hewan, nama_dokter, layanan, treatment) VALUES (NULL, '"
-                    +textFieldNoUrut.getText()+"', '"+TanggalPeriksa+"', '"+textFieldNama.getText()+"', '"
-                    +textFieldAlamat.getText()+"', '"+textFieldNoHp.getText()+"', '"+cmbJenisPeliharaan.getSelectedItem()+"', '"
-                    +textFieldJenisHewan.getText()+"', '"+textFieldNamaHewan.getText()+"', '"+textFieldNamaDokter.getText()+"', '"
-                    +cmbJenisLayanan.getSelectedItem()+"', '"+cmbJenisTreatment.getSelectedItem()+"')";
+                    + textFieldNoUrut.getText() + "', '" + TanggalPeriksa + "', '" + textFieldNama.getText() + "', '"
+                    + textFieldAlamat.getText() + "', '" + textFieldNoHp.getText() + "', '" + cmbJenisPeliharaan.getSelectedItem() + "', '"
+                    + textFieldJenisHewan.getText() + "', '" + textFieldNamaHewan.getText() + "', '" + textFieldNamaDokter.getText() + "', '"
+                    + cmbJenisLayanan.getSelectedItem() + "', '" + cmbJenisTreatment.getSelectedItem() + "')";
             Stm = Con.createStatement();
             int AdaPenambahanRecord = Stm.executeUpdate(Sql);
             tampilDataTable();
-            if (AdaPenambahanRecord>0) {
-                JOptionPane.showMessageDialog(this,"Data Berhasil Tersimpan", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+            if (AdaPenambahanRecord > 0) {
+                JOptionPane.showMessageDialog(this, "Data Berhasil Tersimpan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this,"Data Gagal Tersimpan", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Data Gagal Tersimpan", "Informasi", JOptionPane.INFORMATION_MESSAGE);
             }
             Stm.close();
             kosongObjek();
             nonAktifField();
         } catch (SQLException e) {
-            System.out.println("Koneksi Gagal " +e.toString());
+            System.out.println("Koneksi Gagal " + e.toString());
         }
         tampilDataTable();
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        String Tampilan="yyyy-MM-dd";
+        String Tampilan = "yyyy-MM-dd";
         SimpleDateFormat Fm = new SimpleDateFormat(Tampilan);
         String TanggalPeriksa = String.valueOf(Fm.format(jdateTanggalPeriksa.getDate()));
         try {
             Con = Konek.getKoneksiDatabase();
             Stm = null;
-            Sql = "UPDATE table_data_periksa set tanggal_periksa = '"+TanggalPeriksa+"', nama = '"+textFieldNama.getText()+"', "
-                    + "alamat = '"+textFieldAlamat.getText()+"', no_hp = '"+textFieldNoHp.getText()+"', jenis_peliharaan = '"
-                    +cmbJenisPeliharaan.getSelectedItem()+"', jenis_hewan = '"+textFieldJenisHewan.getText()+"', nama_hewan = '"
-                    +textFieldNamaHewan.getText()+"', nama_dokter = '"+textFieldNamaDokter.getText()+"', layanan = '"
-                    +cmbJenisLayanan.getSelectedItem()+"', treatment = '"
-                    +cmbJenisTreatment.getSelectedItem()+"' WHERE no_urut = '"+textFieldNoUrut.getText()+"'";
-            Stm= Con.createStatement();
-            int AdaPerubahanRecord= Stm.executeUpdate(Sql);
+            Sql = "UPDATE table_data_periksa set tanggal_periksa = '" + TanggalPeriksa + "', nama = '" + textFieldNama.getText() + "', "
+                    + "alamat = '" + textFieldAlamat.getText() + "', no_hp = '" + textFieldNoHp.getText() + "', jenis_peliharaan = '"
+                    + cmbJenisPeliharaan.getSelectedItem() + "', jenis_hewan = '" + textFieldJenisHewan.getText() + "', nama_hewan = '"
+                    + textFieldNamaHewan.getText() + "', nama_dokter = '" + textFieldNamaDokter.getText() + "', layanan = '"
+                    + cmbJenisLayanan.getSelectedItem() + "', treatment = '"
+                    + cmbJenisTreatment.getSelectedItem() + "' WHERE no_urut = '" + textFieldNoUrut.getText() + "'";
+            Stm = Con.createStatement();
+            int AdaPerubahanRecord = Stm.executeUpdate(Sql);
             tampilDataTable();
-            if (AdaPerubahanRecord>0){
-                JOptionPane.showMessageDialog(this,"Data Berhasil Di Edit", "Informasi",JOptionPane.INFORMATION_MESSAGE);
-            }else
-                JOptionPane.showMessageDialog(this,"Data Gagal Di Edit", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+            if (AdaPerubahanRecord > 0) {
+                JOptionPane.showMessageDialog(this, "Data Berhasil Di Edit", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Data Gagal Di Edit", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            }
             Stm.close();
             kosongObjek();
             btnEdit.setEnabled(false);
             btnDelete.setEnabled(false);
             nonAktifField();
         } catch (Exception e) {
-            System.out.println("Koneksi Gagal " +e.toString());
+            System.out.println("Koneksi Gagal " + e.toString());
         }
         tampilDataTable();
     }//GEN-LAST:event_btnEditActionPerformed
@@ -630,22 +678,23 @@ public class DataPage extends javax.swing.JFrame {
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         try {
             Con = Konek.getKoneksiDatabase();
-            Stm = null; 
-            Sql = "delete from table_data_periksa where no_urut = '"+textFieldNoUrut.getText()+"'  ";
-            Stm= Con.createStatement();
-            int AdaPerubahanRecord= Stm.executeUpdate(Sql);
+            Stm = null;
+            Sql = "delete from table_data_periksa where no_urut = '" + textFieldNoUrut.getText() + "'  ";
+            Stm = Con.createStatement();
+            int AdaPerubahanRecord = Stm.executeUpdate(Sql);
             tampilDataTable();
-            if (AdaPerubahanRecord>0){
-                JOptionPane.showMessageDialog(this,"Data Berhasil Di Hapus", "Informasi",JOptionPane.INFORMATION_MESSAGE);
-            }else
-                JOptionPane.showMessageDialog(this,"Data Gagal Di Hapus", "Informasi",JOptionPane.INFORMATION_MESSAGE);
+            if (AdaPerubahanRecord > 0) {
+                JOptionPane.showMessageDialog(this, "Data Berhasil Di Hapus", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Data Gagal Di Hapus", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            }
             Stm.close();
             kosongObjek();
             btnEdit.setEnabled(false);
             btnDelete.setEnabled(false);
             nonAktifField();
-        } catch (SQLException e){
-            System.out.println("Koneksi Gagal " +e.toString());
+        } catch (SQLException e) {
+            System.out.println("Koneksi Gagal " + e.toString());
         }
         tampilDataTable();
     }//GEN-LAST:event_btnDeleteActionPerformed
@@ -661,13 +710,13 @@ public class DataPage extends javax.swing.JFrame {
     private void textFieldNoUrutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldNoUrutActionPerformed
         try {
             Con = Konek.getKoneksiDatabase();
-            Sql = "Select * from table_data_periksa where no_urut='" +textFieldNoUrut.getText() + "'";
-            Stm= Con.createStatement();
+            Sql = "Select * from table_data_periksa where no_urut='" + textFieldNoUrut.getText() + "'";
+            Stm = Con.createStatement();
             Rs2 = Stm.executeQuery(Sql);
-            if (Rs2.next()){ 
-                JOptionPane.showMessageDialog(this,"Silahkan Melakukan Edit Informasi", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+            if (Rs2.next()) {
+                JOptionPane.showMessageDialog(this, "Silahkan Melakukan Edit Informasi", "Informasi", JOptionPane.INFORMATION_MESSAGE);
                 btnSave.setEnabled(false);
-                
+
                 jdateTanggalPeriksa.setDate(Rs2.getDate("tanggal_periksa"));
                 textFieldNama.setText(Rs2.getString("nama"));
                 textFieldAlamat.setText(Rs2.getString("alamat"));
@@ -678,17 +727,17 @@ public class DataPage extends javax.swing.JFrame {
                 textFieldNamaDokter.setText(Rs2.getString("nama_dokter"));
                 cmbJenisLayanan.setSelectedItem(Rs2.getString("layanan"));
                 cmbJenisTreatment.setSelectedItem(Rs2.getString("treatment"));
-                
+
                 btnDelete.setEnabled(true);
                 btnEdit.setEnabled(true);
-                
+
                 AktifField();
             } else {
                 AktifField();
-                
+
                 btnSave.setEnabled(true);
                 btnClear.setEnabled(true);
-                
+
                 jdateTanggalPeriksa.setDate(null);
                 textFieldNama.setText("");
                 textFieldAlamat.setText("");
@@ -698,7 +747,7 @@ public class DataPage extends javax.swing.JFrame {
                 textFieldNamaHewan.setText("");
                 textFieldNamaDokter.setText("");
                 cmbJenisTreatment.setSelectedIndex(0);
-                
+
                 textFieldNama.requestFocus();
             }
         } catch (Exception e) {
@@ -713,9 +762,9 @@ public class DataPage extends javax.swing.JFrame {
             if (i == -1) {
                 return;
             }
-            
+
             textFieldNoUrut.setText(jTable1.getValueAt(i, 0).toString());
-            Date date = new SimpleDateFormat("yyyy-MM-dd").parse((String)Dtm.getValueAt(i, 1));
+            Date date = new SimpleDateFormat("yyyy-MM-dd").parse((String) Dtm.getValueAt(i, 1));
             jdateTanggalPeriksa.setDate(date);
             textFieldNama.setText(jTable1.getValueAt(i, 2).toString());
             textFieldAlamat.setText(jTable1.getValueAt(i, 3).toString());
@@ -730,6 +779,186 @@ public class DataPage extends javax.swing.JFrame {
             System.out.println("koneksi gagal " + e.toString());
         }
     }//GEN-LAST:event_jTable1MouseClicked
+
+    private void btnExportExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportExcelActionPerformed
+        try {
+            JFileChooser jFileChooser = new JFileChooser();
+            jFileChooser.showSaveDialog(this);
+            File saveFile = jFileChooser.getSelectedFile();
+            
+            if (saveFile != null) {
+                saveFile = new File(saveFile.toString() + ".xlsx");
+                
+                Con = Konek.getKoneksiDatabase();
+                Stm = Con.createStatement();
+                Sql = "SELECT table_data_periksa.no_urut AS NoUrut, "
+                        + "table_data_periksa.tanggal_periksa AS TanggalPeriksa, "
+                        + "table_data_periksa.nama AS Nama, "
+                        + "table_data_periksa.alamat AS Alamat, "
+                        + "table_data_periksa.no_hp AS NoHp, "
+                        + "table_data_periksa.jenis_peliharaan AS JenisPeliharaan, "
+                        + "table_data_periksa.jenis_hewan AS JenisHewan, "
+                        + "table_data_periksa.nama_hewan AS NamaHewan, "
+                        + "table_data_periksa.nama_dokter AS NamaDokter, "
+                        + "table_data_periksa.layanan AS Layanan, "
+                        + "table_data_periksa.treatment AS Treatment "
+                        + "FROM table_data_periksa";
+                Rs = Stm.executeQuery(Sql);
+
+                XSSFWorkbook workbook = new XSSFWorkbook();
+                XSSFSheet spreadSheet = workbook.createSheet("DataPeriksa");
+                XSSFRow row = spreadSheet.createRow(1);
+                XSSFCell cell;
+                cell = row.createCell(0);
+                cell.setCellValue("No. Urut");
+                cell = row.createCell(1);
+                cell.setCellValue("Tanggal Periksa");
+                cell = row.createCell(2);
+                cell.setCellValue("Nama");
+                cell = row.createCell(3);
+                cell.setCellValue("Alamat");
+                cell = row.createCell(4);
+                cell.setCellValue("No. Hp");
+                cell = row.createCell(5);
+                cell.setCellValue("Jenis Peliharaan");
+                cell = row.createCell(6);
+                cell.setCellValue("Jenis Hewan");
+                cell = row.createCell(7);
+                cell.setCellValue("Nama Hewan");
+                cell = row.createCell(8);
+                cell.setCellValue("Nama Dokter");
+                cell = row.createCell(9);
+                cell.setCellValue("Jenis Layanan");
+                cell = row.createCell(10);
+                cell.setCellValue("Jenis Treatment");
+
+                int i = 2;
+                while (Rs.next()) {
+                    row = spreadSheet.createRow(i);
+                    cell = row.createCell(0);
+                    cell.setCellValue(Rs.getString("NoUrut"));
+                    cell = row.createCell(1);
+                    cell.setCellValue(Rs.getString("TanggalPeriksa"));
+                    cell = row.createCell(2);
+                    cell.setCellValue(Rs.getString("Nama"));
+                    cell = row.createCell(3);
+                    cell.setCellValue(Rs.getString("Alamat"));
+                    cell = row.createCell(4);
+                    cell.setCellValue(Rs.getString("NoHp"));
+                    cell = row.createCell(5);
+                    cell.setCellValue(Rs.getString("JenisPeliharaan"));
+                    cell = row.createCell(6);
+                    cell.setCellValue(Rs.getString("JenisHewan"));
+                    cell = row.createCell(7);
+                    cell.setCellValue(Rs.getString("NamaHewan"));
+                    cell = row.createCell(8);
+                    cell.setCellValue(Rs.getString("NamaDokter"));
+                    cell = row.createCell(9);
+                    cell.setCellValue(Rs.getString("Layanan"));
+                    cell = row.createCell(10);
+                    cell.setCellValue(Rs.getString("Treatment"));
+                    i++;
+                }
+                //FileOutputStream out = new FileOutputStream(new File("DataPeriksa.xlsx"));
+                FileOutputStream out = new FileOutputStream(new File(saveFile.toString()));
+                workbook.write(out);
+                out.close();
+                JOptionPane.showMessageDialog(this, "Export Berhasil", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+                Con.close();
+            } else {
+                JOptionPane.showMessageDialog(null, "Export tidak berhasil");
+            }
+        } catch (Exception e) {
+            System.out.println("Export gagal " + e.toString());
+        }
+
+//        Dtm = (DefaultTableModel) jTable1.getModel();
+//        jTable1.setModel(Dtm);
+//        try {
+//            WritableWorkbook write = Workbook.createWorkbook(new File("D:DataPeriksa.xlsx"));
+//            WritableSheet sheet = write.createSheet("program_cetak_excel", 0);
+//            sheet.addCell(new Label(0, 0, "No Urut"));
+//            sheet.addCell(new Label(1, 0, "Tanggal Periksa"));
+//            sheet.addCell(new Label(2, 0, "Nama"));
+//            sheet.addCell(new Label(3, 0, "Alamat"));
+//            sheet.addCell(new Label(4, 0, "No. HP"));
+//            sheet.addCell(new Label(5, 0, "Jenis Peliharaan"));
+//            sheet.addCell(new Label(6, 0, "Jenis Hewan"));
+//            sheet.addCell(new Label(7, 0, "Nama Hewan"));
+//            sheet.addCell(new Label(8, 0, "Nama Dokter"));
+//            sheet.addCell(new Label(9, 0, "Jenis Layanan"));
+//            sheet.addCell(new Label(10, 0, "Jenis Treatment"));
+//            for (int i = 0; i < jTable1.getColumnCount(); i++) {
+//                Label column = new Label(i, 0, jTable1.getColumnName(i));
+//                sheet.addCell(column);
+//            }
+//
+//            for (int i = 1; i < jTable1.getRowCount(); i++) {
+//                for (int j = 0; j < jTable1.getColumnCount(); j++) {
+//                    Label row = new Label(j, i, jTable1.getValueAt(i, j).toString());
+//                    sheet.addCell(row);
+//                }
+//            }
+//            write.write();
+//            write.close();
+//            JOptionPane.showMessageDialog(null, "Data Berhasil Disimpan Ke Excel");
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(null, "Data Gagal Disimpan!!!" + e.toString());
+//        }
+//        FileOutputStream excelFOU = null;
+//        BufferedOutputStream excelBOU = null;
+//        XSSFWorkbook excelJTableExporter = null;
+//        try {
+//            JFileChooser excelFileChooser = new JFileChooser("Documents");
+//            excelFileChooser.setDialogTitle("Save As");
+//            FileNameExtensionFilter fnef = new FileNameExtensionFilter("Excel Files", "xls", "xlsx", "xlsm");
+//            excelFileChooser.setFileFilter(fnef);
+//            int excelChooser = excelFileChooser.showSaveDialog(null);
+//
+//            if (excelChooser == JFileChooser.APPROVE_OPTION) {
+//                excelJTableExporter = new XSSFWorkbook();
+//                XSSFSheet excelSheet = excelJTableExporter.createSheet("JTable Sheet");
+//                for (int i = 0; i < Dtm.getRowCount(); i++) {
+//                    XSSFRow excelRow = excelSheet.createRow(i);
+//                    for (int j = 0; j < Dtm.getColumnCount(); j++) {
+//                        XSSFCell excelCell = excelRow.createCell(j);
+//
+//                        excelCell.setCellValue(Dtm.getValueAt(i, j).toString());
+//                    }
+//                }
+//                excelFOU = new FileOutputStream(excelFileChooser.getSelectedFile() + ".xlsx");
+//                excelBOU = new BufferedOutputStream(excelFOU);
+//                excelJTableExporter.write(excelBOU);
+//                JOptionPane.showMessageDialog(null, "Export Success");
+//            }
+//        } catch (FileNotFoundException ex) {
+//            JOptionPane.showMessageDialog(null, "Data Gagal Disimpan!!!" + ex.toString());
+//        } catch (IOException ex) {
+//            JOptionPane.showMessageDialog(null, "Data Gagal Disimpan!!!" + ex.toString());
+//        } finally {
+//            try {
+//                if (excelFOU != null) {
+//                    excelFOU.close();
+//                }
+//                if (excelBOU != null) {
+//                    excelBOU.close();
+//                }
+//                if (excelJTableExporter != null) {
+//                    excelJTableExporter.close();
+//                }
+//            } catch (IOException ex) {
+//                JOptionPane.showMessageDialog(null, "Data Gagal Disimpan!!!" + ex.toString());
+//            }
+//        }
+//        JFileChooser fchoose = new JFileChooser();
+//        int option = fchoose.showSaveDialog(DataPage.this);
+//        if (option == JFileChooser.APPROVE_OPTION) {
+//            String name = fchoose.getSelectedFile().getName();
+//            String path = fchoose.getSelectedFile().getParentFile().getPath();
+//            String file = path + "\\" + name + ".xlsx";
+//            Export(new File(file));
+//        }
+    }//GEN-LAST:event_btnExportExcelActionPerformed
 
     /**
      * @param args the command line arguments
@@ -771,6 +1000,7 @@ public class DataPage extends javax.swing.JFrame {
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btnExportExcel;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnSearch;
     private javax.swing.JComboBox<String> cmbJenisLayanan;
